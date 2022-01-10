@@ -1,13 +1,13 @@
-use element::Element;
 use std::fmt;
 
+// BLOCK
 #[derive(Default)]
-pub struct Block {
+pub struct Box {
     elements: [Element; 9],
 }
 
-impl Block {
-    pub fn new(elements: [u8; 9]) -> Block {
+impl Box {
+    pub fn new(elements: [u8; 9]) -> Box {
         let mut el_arr = [Element::default(); 9];
         for index in 0..9 {
             let value = elements[index];
@@ -15,7 +15,7 @@ impl Block {
                 el_arr[index] = element;
             }
         }
-        Block { elements: el_arr }
+        Box { elements: el_arr }
     }
 
     pub fn row(&self, value: usize) -> [Element; 3] {
@@ -36,7 +36,7 @@ impl Block {
     }
 }
 
-impl fmt::Display for Block {
+impl fmt::Display for Box {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut block_str = String::from("");
         let mut index = 0;
@@ -53,27 +53,24 @@ impl fmt::Display for Block {
     }
 }
 
-mod element {
-    use std::fmt;
+// ELEMENT
+#[derive(Clone, Copy, Default)]
+struct Element {
+    value: u8,
+}
 
-    #[derive(Clone, Copy, Default)]
-    pub struct Element {
-        value: u8,
-    }
-
-    impl Element {
-        pub fn new(value: u8) -> Option<Element> {
-            if value <= 9 {
-                Some(Element { value })
-            } else {
-                None
-            }
+impl Element {
+    fn new(value: u8) -> Option<Element> {
+        if value <= 9 {
+            Some(Element { value })
+        } else {
+            None
         }
     }
+}
 
-    impl fmt::Display for Element {
-        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            write!(f, "{}", self.value)
-        }
+impl fmt::Display for Element {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.value)
     }
 }
