@@ -1,8 +1,9 @@
-use block::Block;
+use sudoku::Box;
 use tui::backend::CrosstermBackend;
-use tui::widgets::Chart;
+use tui::layout::Constraint;
+use tui::widgets::{Block, Row, Table};
 use tui::Terminal;
-mod block;
+mod sudoku;
 
 fn main() -> Result<(), std::io::Error> {
     let stdout = std::io::stdout();
@@ -10,23 +11,40 @@ fn main() -> Result<(), std::io::Error> {
     let mut terminal = Terminal::new(backend)?;
     terminal.clear()?;
 
-    let block0 = Block::new([0, 1, 2, 3, 4, 5, 6, 7, 8]);
-    let row = block0.row(1);
-    let col = block0.col(1);
-    println!("Row ->");
-    row.iter().for_each(|el| println!("{}", el));
-    println!("\nCol ->");
-    col.iter().for_each(|el| println!("{}", el));
-    println!("\nBlock ->");
-    println!("{}", block0);
+    let sudoku_raw = vec![
+        [5, 3, 0, 6, 0, 0, 0, 9, 8],
+        [0, 7, 0, 1, 9, 5, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 6, 0],
+        [8, 0, 0, 4, 0, 0, 7, 0, 0],
+        [0, 6, 0, 8, 0, 3, 0, 2, 0],
+        [0, 0, 3, 0, 0, 1, 0, 0, 6],
+        [0, 6, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 4, 1, 9, 0, 8, 0],
+        [2, 8, 0, 0, 0, 5, 0, 7, 9],
+    ];
+    let mut sudoku_boxes = Vec::new();
+    for index in 0..sudoku_raw.len() {
+        let block_raw = sudoku_raw[index];
+        let block = Box::new(block_raw);
+        sudoku_boxes.push(block);
+    }
 
-    // let grid_values = Vec::new();
+    let sudoku_rows = vec![Row::default(); 9];
 
-    // let chart = Chart::new(grid_values);
+    // println!("{:?}", block0_data);
 
-    // terminal.draw(|f| {
-    //     let size = f.size();
-    //     f.render_widget(chart, size);
-    // })?;
+    let table = Table::new(sudoku_rows)
+        .block(Block::default().title("Table"))
+        .widths(&[
+            Constraint::Percentage(30),
+            Constraint::Percentage(30),
+            Constraint::Percentage(30),
+        ])
+        .column_spacing(1);
+
+    terminal.draw(|f| {
+        let size = f.size();
+        f.render_widget(table, size);
+    })?;
     Ok(())
 }
