@@ -1,7 +1,21 @@
 use std::fmt;
 
-// BLOCK
-#[derive(Default)]
+pub struct Sudoku {
+    boxes: [Box; 9],
+}
+
+impl From<Vec<[u8; 9]>> for Sudoku {
+    fn from(sudoku_raw: Vec<[u8; 9]>) -> Self {
+        let mut boxes = [Box::default(); 9];
+        for index in 0..boxes.len() {
+            boxes[index] = Box::new(sudoku_raw[index]);
+        }
+        Sudoku { boxes }
+    }
+}
+
+// BOX
+#[derive(Clone, Copy, Default)]
 pub struct Box {
     elements: [Element; 9],
 }
@@ -55,7 +69,7 @@ impl fmt::Display for Box {
 
 // ELEMENT
 #[derive(Clone, Copy, Default)]
-struct Element {
+pub struct Element {
     value: u8,
 }
 
