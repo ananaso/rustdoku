@@ -14,6 +14,38 @@ impl From<Vec<[u8; 9]>> for Sudoku {
     }
 }
 
+impl Sudoku {
+    pub fn row(&self, index: usize) -> Option<Vec<Element>> {
+        if index <= 8 {
+            let mut row = Vec::new();
+            let block_index = index / 3;
+            let row_index = index % 3;
+            for i in 0..3 {
+                let block_row = self.boxes[block_index + i].row(row_index);
+                block_row.iter().for_each(|el| row.push(el.to_owned()));
+            }
+            Some(row)
+        } else {
+            None
+        }
+    }
+
+    pub fn col(&self, index: usize) -> Option<Vec<Element>> {
+        if index <= 8 {
+            let mut col = Vec::new();
+            let block_index = index / 3;
+            let col_index = index % 3;
+            for i in 0..3 {
+                let block_col = self.boxes[block_index + i].col(col_index);
+                block_col.iter().for_each(|el| col.push(el.to_owned()));
+            }
+            Some(col)
+        } else {
+            None
+        }
+    }
+}
+
 // BOX
 #[derive(Clone, Copy, Default)]
 pub struct Box {
@@ -68,7 +100,7 @@ impl fmt::Display for Box {
 }
 
 // ELEMENT
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy, Debug, Default)]
 pub struct Element {
     value: u8,
 }
