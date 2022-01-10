@@ -1,7 +1,7 @@
 use sudoku::Sudoku;
 use tui::backend::CrosstermBackend;
-use tui::layout::Constraint;
-use tui::widgets::{Block, Row, Table};
+use tui::layout::{Constraint, Rect};
+use tui::widgets::{Block, Borders, Row, Table};
 use tui::Terminal;
 mod sudoku;
 
@@ -27,19 +27,40 @@ fn main() -> Result<(), std::io::Error> {
     let mut sudoku_rows = Vec::new();
     for index in 0..9 {
         if let Some(el_row) = sudoku_boxes.row(index) {
-            let str_row: Vec<String> = el_row.iter().map(|el| el.to_string()).collect();
-            sudoku_rows.push(Row::new(str_row));
+            let row_str: Vec<String> = el_row.iter().map(|el| el.to_string()).collect();
+            let mut row = Row::new(row_str);
+            if index % 3 == 2 && index != 8 {
+                row = row.bottom_margin(1);
+            }
+            sudoku_rows.push(row);
         }
     }
 
     let table = Table::new(sudoku_rows)
-        .block(Block::default().title("Table"))
-        .widths(&[Constraint::Length(2); 9])
+        .block(Block::default().title("Sudoku").borders(Borders::ALL))
+        .widths(&[
+            Constraint::Length(2),
+            Constraint::Length(2),
+            Constraint::Length(3),
+            Constraint::Length(2),
+            Constraint::Length(2),
+            Constraint::Length(3),
+            Constraint::Length(2),
+            Constraint::Length(2),
+            Constraint::Length(2),
+        ])
         .column_spacing(1);
 
     terminal.draw(|f| {
         let size = f.size();
+        let size = Rect {
+            x: 0,
+            y: 0,
+            width: 29,
+            height: 13,
+        };
         f.render_widget(table, size);
     })?;
+    println!("");
     Ok(())
 }
