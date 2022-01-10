@@ -1,4 +1,4 @@
-use sudoku::Box;
+use sudoku::Sudoku;
 use tui::backend::CrosstermBackend;
 use tui::layout::Constraint;
 use tui::widgets::{Block, Row, Table};
@@ -22,24 +22,19 @@ fn main() -> Result<(), std::io::Error> {
         [0, 0, 0, 4, 1, 9, 0, 8, 0],
         [2, 8, 0, 0, 0, 5, 0, 7, 9],
     ];
-    let mut sudoku_boxes = Vec::new();
-    for index in 0..sudoku_raw.len() {
-        let block_raw = sudoku_raw[index];
-        let block = Box::new(block_raw);
-        sudoku_boxes.push(block);
+    let sudoku_boxes = Sudoku::from(sudoku_raw);
+
+    let mut sudoku_rows = Vec::new();
+    for index in 0..9 {
+        if let Some(el_row) = sudoku_boxes.row(index) {
+            let str_row: Vec<String> = el_row.iter().map(|el| el.to_string()).collect();
+            sudoku_rows.push(Row::new(str_row));
+        }
     }
-
-    let sudoku_rows = vec![Row::default(); 9];
-
-    // println!("{:?}", block0_data);
 
     let table = Table::new(sudoku_rows)
         .block(Block::default().title("Table"))
-        .widths(&[
-            Constraint::Percentage(30),
-            Constraint::Percentage(30),
-            Constraint::Percentage(30),
-        ])
+        .widths(&[Constraint::Length(2); 9])
         .column_spacing(1);
 
     terminal.draw(|f| {
