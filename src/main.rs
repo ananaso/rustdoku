@@ -9,6 +9,76 @@ use tui::widgets::{Block, Borders, Cell, Row, Table, TableState};
 use tui::Terminal;
 mod sudoku;
 
+pub struct StatefulTable {
+    state: TableState,
+}
+
+impl StatefulTable {
+    fn new() -> StatefulTable {
+        let mut table = StatefulTable {
+            state: TableState::default(),
+        };
+        table.state.select(Some(0));
+        return table;
+    }
+
+    pub fn right(&mut self) {
+        let i = match self.state.selected() {
+            Some(i) => {
+                if i % 9 < 8 {
+                    i + 1
+                } else {
+                    i - 8
+                }
+            }
+            None => 0,
+        };
+        self.state.select(Some(i));
+    }
+
+    pub fn left(&mut self) {
+        let i = match self.state.selected() {
+            Some(i) => {
+                if i % 9 > 0 {
+                    i - 1
+                } else {
+                    i + 8
+                }
+            }
+            None => 0,
+        };
+        self.state.select(Some(i));
+    }
+
+    pub fn down(&mut self) {
+        let i = match self.state.selected() {
+            Some(i) => {
+                if i < 72 {
+                    i + 9
+                } else {
+                    i - 72
+                }
+            }
+            None => 0,
+        };
+        self.state.select(Some(i));
+    }
+
+    pub fn up(&mut self) {
+        let i = match self.state.selected() {
+            Some(i) => {
+                if i > 8 {
+                    i - 9
+                } else {
+                    i + 72
+                }
+            }
+            None => 0,
+        };
+        self.state.select(Some(i));
+    }
+}
+
 fn main() -> Result<(), std::io::Error> {
     let stdout = std::io::stdout();
     let backend = CrosstermBackend::new(stdout);
@@ -28,7 +98,7 @@ fn main() -> Result<(), std::io::Error> {
     ];
     let sudoku_boxes = Sudoku::from(sudoku_raw);
 
-    let mut table_state = TableState::default();
+    let mut table_state = StatefulTable::new();
 
     terminal.clear()?;
     loop {
@@ -71,16 +141,21 @@ fn main() -> Result<(), std::io::Error> {
                 width,
                 height,
             };
-            f.render_widget(table, size);
+            f.render_stateful_widget(table, size, &mut table_state.state);
         })?;
 
         if poll(Duration::from_secs(0))? {
             match read()? {
                 Event::Key(event) => match event.code {
+                    KeyCode::Right => table_state.right(),
+                    KeyCode::Left => table_state.left(),
+                    KeyCode::Down => table_state.down(),
+                    KeyCode::Up => table_state.up(),
                     KeyCode::Char('q') | KeyCode::Esc => {
                         disable_raw_mode()?;
                         break;
                     }
+                    KeyCode::Enter => println!("\r\n{:?}", table_state.state.selected()),
                     other => println!("\r\n{:?}", other),
                 },
                 Event::Mouse(event) => println!("{:?}", event),
