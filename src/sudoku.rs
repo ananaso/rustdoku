@@ -117,6 +117,10 @@ impl Element {
 
 impl fmt::Display for Element {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.value)
+        if self.value > 0 {
+            write!(f, "{}", self.value)
+        } else {
+            write!(f, " ")
+        }
     }
 }
