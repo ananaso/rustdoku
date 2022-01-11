@@ -9,13 +9,13 @@ use tui::widgets::{Block, Borders, Cell, Row, Table, TableState};
 use tui::Terminal;
 mod sudoku;
 
-pub struct StatefulTable {
+pub struct StatefulGrid {
     state: TableState,
 }
 
-impl StatefulTable {
-    fn new() -> StatefulTable {
-        let mut table = StatefulTable {
+impl StatefulGrid {
+    fn new() -> StatefulGrid {
+        let mut table = StatefulGrid {
             state: TableState::default(),
         };
         table.state.select(Some(0));
@@ -98,7 +98,7 @@ fn main() -> Result<(), std::io::Error> {
     ];
     let sudoku_boxes = Sudoku::from(sudoku_raw);
 
-    let mut table_state = StatefulTable::new();
+    let mut table_state = StatefulGrid::new();
 
     terminal.clear()?;
     loop {
@@ -151,7 +151,7 @@ fn main() -> Result<(), std::io::Error> {
                     KeyCode::Left => table_state.left(),
                     KeyCode::Down => table_state.down(),
                     KeyCode::Up => table_state.up(),
-                    KeyCode::Char('q') | KeyCode::Esc => {
+                    KeyCode::Esc | KeyCode::Char('q') => {
                         disable_raw_mode()?;
                         break;
                     }
