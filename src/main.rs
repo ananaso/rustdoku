@@ -5,9 +5,17 @@ use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
 use sudoku::Sudoku;
 use tui::backend::CrosstermBackend;
 use tui::layout::{Constraint, Rect};
+use tui::style::{Color, Modifier, Style};
 use tui::widgets::{Block, Borders, Cell, Row, Table, TableState};
 use tui::Terminal;
 mod sudoku;
+
+/*
+let cursor = terminal.get_cursor()?;
+terminal.set_cursor(0, 40)?;
+println!("{}", string);
+terminal.set_cursor(cursor.0, cursor.1)?;
+*/
 
 pub struct StatefulGrid {
     state: TableState,
@@ -105,8 +113,24 @@ fn main() -> Result<(), std::io::Error> {
         let mut sudoku_rows = Vec::new();
         for index in 0..9 {
             if let Some(el_row) = sudoku_boxes.row(index) {
-                let row_cells: Vec<Cell> =
-                    el_row.iter().map(|el| Cell::from(el.to_string())).collect();
+                let row_cells: Vec<Cell> = el_row
+                    .iter()
+                    .enumerate()
+                    .map(|(i, el)| {
+                        let mut new_cell = Cell::from(el.to_string());
+                        if let Some(selected_cell_index) = table_state.state.selected() {
+                            if selected_cell_index == (index * 9) + i {
+                                new_cell = Cell::from(el.to_string()).style(
+                                    Style::default()
+                                        .fg(Color::Black)
+                                        .bg(Color::White)
+                                        .add_modifier(Modifier::BOLD),
+                                );
+                            }
+                        }
+                        return new_cell;
+                    })
+                    .collect();
                 let mut row = Row::new(row_cells);
                 if index % 3 == 2 && index != 8 {
                     row = row.bottom_margin(1);
