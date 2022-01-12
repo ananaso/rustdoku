@@ -178,7 +178,11 @@ fn main() -> Result<(), std::io::Error> {
                     let cursor = terminal.get_cursor()?;
                     terminal.set_cursor(0, 40)?;
                     let selected = table_state.state.selected().unwrap_or_else(|| 81);
-                    println!("{:?}", sudoku_boxes.get_element(selected));
+                    if let Some(element) = sudoku_boxes.get_element(selected) {
+                        println!("{:?}", element);
+                    } else {
+                        println!("Uh-oh, you selected an element that doesn't exist");
+                    }
                     terminal.set_cursor(cursor.0, cursor.1)?;
                 }
                 other => println!("\r\n{:?}", other),
