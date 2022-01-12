@@ -1,6 +1,4 @@
-use std::time::Duration;
-
-use crossterm::event::{poll, read, Event, KeyCode};
+use crossterm::event::{read, Event, KeyCode};
 use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
 use sudoku::Sudoku;
 use tui::backend::CrosstermBackend;
@@ -131,11 +129,7 @@ fn main() -> Result<(), std::io::Error> {
                         return new_cell;
                     })
                     .collect();
-                let mut row = Row::new(row_cells);
-                if index % 3 == 2 && index != 8 {
-                    row = row.bottom_margin(1);
-                }
-                sudoku_rows.push(row);
+                sudoku_rows.push(Row::new(row_cells));
             }
         }
 
@@ -144,18 +138,18 @@ fn main() -> Result<(), std::io::Error> {
             .widths(&[
                 Constraint::Length(2),
                 Constraint::Length(2),
-                Constraint::Length(3),
                 Constraint::Length(2),
                 Constraint::Length(2),
-                Constraint::Length(3),
+                Constraint::Length(2),
+                Constraint::Length(2),
                 Constraint::Length(2),
                 Constraint::Length(2),
                 Constraint::Length(2),
             ])
             .column_spacing(1);
 
-        let width = 3 * 7 + 2 * 3 + 2;
-        let height = 3 * 3 + 2 + 2;
+        let width = 3 * 9 + 1;
+        let height = 3 * 3 + 2;
 
         terminal.draw(|f| {
             // let size = f.size();
