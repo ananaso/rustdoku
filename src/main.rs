@@ -119,7 +119,7 @@ fn main() -> Result<(), std::io::Error> {
                         let mut new_cell = Cell::from(el.to_string());
                         if let Some(selected_cell_index) = table_state.state.selected() {
                             if selected_cell_index == (index * 9) + i {
-                                new_cell = Cell::from(el.to_string()).style(
+                                new_cell = new_cell.style(
                                     Style::default()
                                         .fg(Color::Black)
                                         .bg(Color::White)
