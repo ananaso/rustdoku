@@ -168,23 +168,21 @@ fn main() -> Result<(), std::io::Error> {
             f.render_stateful_widget(table, size, &mut table_state.state);
         })?;
 
-        if poll(Duration::from_secs(0))? {
-            match read()? {
-                Event::Key(event) => match event.code {
-                    KeyCode::Right => table_state.right(),
-                    KeyCode::Left => table_state.left(),
-                    KeyCode::Down => table_state.down(),
-                    KeyCode::Up => table_state.up(),
-                    KeyCode::Esc | KeyCode::Char('q') => {
-                        disable_raw_mode()?;
-                        break;
-                    }
-                    KeyCode::Enter => println!("\r\n{:?}", table_state.state.selected()),
-                    other => println!("\r\n{:?}", other),
-                },
-                Event::Mouse(event) => println!("{:?}", event),
-                Event::Resize(width, height) => println!("New size {}x{}", width, height),
-            }
+        match read()? {
+            Event::Key(event) => match event.code {
+                KeyCode::Right => table_state.right(),
+                KeyCode::Left => table_state.left(),
+                KeyCode::Down => table_state.down(),
+                KeyCode::Up => table_state.up(),
+                KeyCode::Esc | KeyCode::Char('q') => {
+                    disable_raw_mode()?;
+                    break;
+                }
+                KeyCode::Enter => println!("\r\n{:?}", table_state.state.selected()),
+                other => println!("\r\n{:?}", other),
+            },
+            Event::Mouse(event) => println!("{:?}", event),
+            Event::Resize(width, height) => println!("New size {}x{}", width, height),
         }
     }
 
