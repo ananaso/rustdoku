@@ -169,6 +169,7 @@ fn main() -> Result<(), std::io::Error> {
                 KeyCode::Down => table_state.down(),
                 KeyCode::Up => table_state.up(),
                 KeyCode::Esc | KeyCode::Char('q') => {
+                    terminal.set_cursor(0, height)?;
                     disable_raw_mode()?;
                     break;
                 }
