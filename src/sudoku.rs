@@ -170,6 +170,10 @@ impl Element {
             None
         }
     }
+
+    pub fn is_clue(&self) -> bool {
+        self.is_clue
+    }
 }
 
 impl fmt::Display for Element {
