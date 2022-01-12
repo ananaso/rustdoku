@@ -107,6 +107,7 @@ fn main() -> Result<(), std::io::Error> {
     let mut table_state = StatefulGrid::new();
 
     terminal.clear()?;
+    println!("TODO: table or sudoku_boxes doesn't seem to build exactly from sudoku_raw correctly");
     loop {
         let mut sudoku_rows = Vec::new();
         for index in 0..9 {
@@ -133,7 +134,7 @@ fn main() -> Result<(), std::io::Error> {
             }
         }
 
-        let table = Table::new(sudoku_rows)
+        let table = Table::new(sudoku_rows.to_vec())
             .block(Block::default().title("Sudoku").borders(Borders::ALL))
             .widths(&[
                 Constraint::Length(2),
@@ -173,7 +174,13 @@ fn main() -> Result<(), std::io::Error> {
                     disable_raw_mode()?;
                     break;
                 }
-                KeyCode::Enter => println!("\r\n{:?}", table_state.state.selected()),
+                KeyCode::Enter => {
+                    let cursor = terminal.get_cursor()?;
+                    terminal.set_cursor(0, 40)?;
+                    let selected = table_state.state.selected().unwrap_or_else(|| 81);
+                    println!("{:?}", sudoku_boxes.get_element(selected));
+                    terminal.set_cursor(cursor.0, cursor.1)?;
+                }
                 other => println!("\r\n{:?}", other),
             },
             Event::Mouse(event) => println!("{:?}", event),
