@@ -36,20 +36,20 @@ impl Sudoku {
         }
     }
 
-    pub fn col(&self, index: usize) -> Option<Vec<Element>> {
-        if index <= 8 {
-            let mut col = Vec::new();
-            let block_index = index / 3;
-            let col_index = index % 3;
-            for i in 0..3 {
-                let block_col = self.boxes[block_index + i].col(col_index);
-                block_col.iter().for_each(|el| col.push(el.to_owned()));
-            }
-            Some(col)
-        } else {
-            None
-        }
-    }
+    // pub fn col(&self, index: usize) -> Option<Vec<Element>> {
+    //     if index <= 8 {
+    //         let mut col = Vec::new();
+    //         let block_index = index / 3;
+    //         let col_index = index % 3;
+    //         for i in 0..3 {
+    //             let block_col = self.boxes[block_index + i].col(col_index);
+    //             block_col.iter().for_each(|el| col.push(el.to_owned()));
+    //         }
+    //         Some(col)
+    //     } else {
+    //         None
+    //     }
+    // }
 
     pub fn get_element(&self, index: usize) -> Option<&Element> {
         if let Some((box_index, element_index)) = Sudoku::deconstruct_index(index) {
@@ -121,13 +121,13 @@ impl Box {
         return row;
     }
 
-    pub fn col(&self, value: usize) -> [Element; 3] {
-        let mut col = [Element::default(); 3];
-        for index in 0..3 {
-            col[index] = self.elements[value + (index * 3)]
-        }
-        return col;
-    }
+    // pub fn col(&self, value: usize) -> [Element; 3] {
+    //     let mut col = [Element::default(); 3];
+    //     for index in 0..3 {
+    //         col[index] = self.elements[value + (index * 3)]
+    //     }
+    //     return col;
+    // }
 
     fn get_element(&self, index: usize) -> Option<&Element> {
         if index <= 8 {
