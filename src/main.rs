@@ -90,11 +90,15 @@ fn create_styled_cell(content: String, style: &str) -> Cell {
     match style {
         "selected" => cell.style(
             Style::default()
-                .fg(Color::Black)
-                .bg(Color::White)
+                .add_modifier(Modifier::REVERSED)
                 .add_modifier(Modifier::BOLD),
         ),
-        "clue" => cell.style(Style::default().fg(Color::LightYellow)),
+        "selected_clue" => cell.style(
+            Style::default()
+                .bg(Color::Cyan)
+                .add_modifier(Modifier::REVERSED),
+        ),
+        "clue" => cell.style(Style::default().fg(Color::LightCyan)),
         &_ => cell,
     }
 }
@@ -132,7 +136,11 @@ fn main() -> Result<(), std::io::Error> {
                         let mut style = "default";
                         if let Some(selected_cell_index) = table_state.state.selected() {
                             if selected_cell_index == (index * 9) + i {
-                                style = "selected";
+                                if el.is_clue() {
+                                    style = "selected_clue";
+                                } else {
+                                    style = "selected";
+                                }
                             } else if el.is_clue() {
                                 style = "clue";
                             }
