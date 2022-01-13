@@ -85,6 +85,20 @@ impl StatefulGrid {
     }
 }
 
+fn create_styled_cell(content: String, style: &str) -> Cell {
+    let cell = Cell::from(content);
+    match style {
+        "selected" => cell.style(
+            Style::default()
+                .fg(Color::Black)
+                .bg(Color::White)
+                .add_modifier(Modifier::BOLD),
+        ),
+        "clue" => cell.style(Style::default().fg(Color::LightYellow)),
+        &_ => cell,
+    }
+}
+
 fn main() -> Result<(), std::io::Error> {
     let stdout = std::io::stdout();
     let backend = CrosstermBackend::new(stdout);
@@ -107,7 +121,6 @@ fn main() -> Result<(), std::io::Error> {
     let mut table_state = StatefulGrid::new();
 
     terminal.clear()?;
-    println!("TODO: table or sudoku_boxes doesn't seem to build exactly from sudoku_raw correctly");
     loop {
         let mut sudoku_rows = Vec::new();
         for index in 0..9 {
@@ -116,18 +129,15 @@ fn main() -> Result<(), std::io::Error> {
                     .iter()
                     .enumerate()
                     .map(|(i, el)| {
-                        let mut new_cell = Cell::from(el.to_string());
+                        let mut style = "default";
                         if let Some(selected_cell_index) = table_state.state.selected() {
                             if selected_cell_index == (index * 9) + i {
-                                new_cell = new_cell.style(
-                                    Style::default()
-                                        .fg(Color::Black)
-                                        .bg(Color::White)
-                                        .add_modifier(Modifier::BOLD),
-                                );
+                                style = "selected";
+                            } else if el.is_clue() {
+                                style = "clue";
                             }
                         }
-                        return new_cell;
+                        return create_styled_cell(el.to_string(), style);
                     })
                     .collect();
                 sudoku_rows.push(Row::new(row_cells));
@@ -179,7 +189,7 @@ fn main() -> Result<(), std::io::Error> {
                     terminal.set_cursor(0, 40)?;
                     let selected = table_state.state.selected().unwrap_or_else(|| 81);
                     if let Some(element) = sudoku_boxes.get_element(selected) {
-                        println!("{:?}", element);
+                        println!("{}", element.is_clue());
                     } else {
                         println!("Uh-oh, you selected an element that doesn't exist");
                     }
