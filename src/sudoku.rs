@@ -95,12 +95,12 @@ impl Sudoku {
 
 // BOX
 #[derive(Clone, Copy, Debug, Default)]
-pub struct Box {
+struct Box {
     elements: [Element; 9],
 }
 
 impl Box {
-    pub fn new(elements: [u8; 9]) -> Box {
+    fn new(elements: [u8; 9]) -> Box {
         let mut el_arr = [Element::default(); 9];
         for index in 0..9 {
             let value = elements[index];
@@ -112,7 +112,7 @@ impl Box {
         Box { elements: el_arr }
     }
 
-    pub fn row(&self, value: usize) -> Vec<&Element> {
+    fn row(&self, value: usize) -> Vec<&Element> {
         let value = value * 3;
         let mut row = Vec::new();
         for index in value..(value + 3) {
