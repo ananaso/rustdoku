@@ -64,6 +64,19 @@ impl Sudoku {
         }
     }
 
+    pub fn set_element(&mut self, index: usize, value: u8) -> Option<u8> {
+        if let Some((box_index, element_index)) = Sudoku::deconstruct_index(index) {
+            let selected_box = &mut self.boxes[box_index];
+            if let Some(set_value) = selected_box.set_element(element_index, value) {
+                Some(set_value)
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    }
+
     // Returns two indexes:
     //  the first is the box index
     //  the second is the element index within that box
@@ -136,6 +149,15 @@ impl Box {
             None
         }
     }
+
+    fn set_element(&mut self, index: usize, value: u8) -> Option<u8> {
+        if index <= 8 {
+            self.elements[index].value = value;
+            Some(value)
+        } else {
+            None
+        }
+    }
 }
 
 impl fmt::Display for Box {
@@ -158,7 +180,7 @@ impl fmt::Display for Box {
 // ELEMENT
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Element {
-    value: u8,
+    pub value: u8,
     is_clue: bool,
 }
 
