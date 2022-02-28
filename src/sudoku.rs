@@ -152,7 +152,7 @@ impl Box {
 
     fn set_element(&mut self, index: usize, value: u8) -> Option<u8> {
         if index <= 8 {
-            self.elements[index].value = value;
+            self.elements[index].current_value = value;
             Some(value)
         } else {
             None
@@ -180,14 +180,23 @@ impl fmt::Display for Box {
 // ELEMENT
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Element {
+    pub current_value: u8,
     pub value: u8,
     is_clue: bool,
 }
 
 impl Element {
     fn new(value: u8, is_clue: bool) -> Option<Element> {
+        let mut current_value = 0;
         if value <= 9 {
-            Some(Element { value, is_clue })
+            if is_clue {
+                current_value = value
+            }
+            Some(Element {
+                current_value,
+                is_clue,
+                value,
+            })
         } else {
             None
         }
@@ -200,8 +209,8 @@ impl Element {
 
 impl fmt::Display for Element {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if self.value > 0 {
-            write!(f, "{}", self.value)
+        if self.current_value > 0 {
+            write!(f, "{}", self.current_value)
         } else {
             write!(f, " ")
         }

@@ -108,71 +108,10 @@ fn create_styled_cell(content: String, style: &str) -> Cell {
     }
 }
 
-fn enter_number(sudoku_grid: &mut StatefulGrid) -> Result<(), std::io::Error> {
-    loop {
-        match read()? {
-            Event::Key(event) => match event.code {
-                KeyCode::Char('1') => {
-                    if let Some(grid_index) = sudoku_grid.state.selected() {
-                        sudoku_grid.items.set_element(grid_index, 1);
-                    };
-                    break;
-                }
-                KeyCode::Char('2') => {
-                    if let Some(grid_index) = sudoku_grid.state.selected() {
-                        sudoku_grid.items.set_element(grid_index, 2);
-                    };
-                    break;
-                }
-                KeyCode::Char('3') => {
-                    if let Some(grid_index) = sudoku_grid.state.selected() {
-                        sudoku_grid.items.set_element(grid_index, 3);
-                    };
-                    break;
-                }
-                KeyCode::Char('4') => {
-                    if let Some(grid_index) = sudoku_grid.state.selected() {
-                        sudoku_grid.items.set_element(grid_index, 4);
-                    };
-                    break;
-                }
-                KeyCode::Char('5') => {
-                    if let Some(grid_index) = sudoku_grid.state.selected() {
-                        sudoku_grid.items.set_element(grid_index, 5);
-                    };
-                    break;
-                }
-                KeyCode::Char('6') => {
-                    if let Some(grid_index) = sudoku_grid.state.selected() {
-                        sudoku_grid.items.set_element(grid_index, 6);
-                    };
-                    break;
-                }
-                KeyCode::Char('7') => {
-                    if let Some(grid_index) = sudoku_grid.state.selected() {
-                        sudoku_grid.items.set_element(grid_index, 7);
-                    };
-                    break;
-                }
-                KeyCode::Char('8') => {
-                    if let Some(grid_index) = sudoku_grid.state.selected() {
-                        sudoku_grid.items.set_element(grid_index, 8);
-                    };
-                    break;
-                }
-                KeyCode::Char('9') => {
-                    if let Some(grid_index) = sudoku_grid.state.selected() {
-                        sudoku_grid.items.set_element(grid_index, 9);
-                    };
-                    break;
-                }
-                KeyCode::Esc => break,
-                _ => (),
-            },
-            _ => (),
-        }
+fn enter_value(sudoku_grid: &mut StatefulGrid, value: u8) -> Result<(), std::io::Error> {
+    if let Some(grid_index) = sudoku_grid.state.selected() {
+        sudoku_grid.items.set_element(grid_index, value);
     }
-
     Ok(())
 }
 
@@ -264,7 +203,16 @@ fn main() -> Result<(), std::io::Error> {
                     disable_raw_mode()?;
                     break;
                 }
-                KeyCode::Enter => enter_number(&mut sudoku_grid)?,
+                KeyCode::Char('1') => enter_value(&mut sudoku_grid, 1)?,
+                KeyCode::Char('2') => enter_value(&mut sudoku_grid, 2)?,
+                KeyCode::Char('3') => enter_value(&mut sudoku_grid, 3)?,
+                KeyCode::Char('4') => enter_value(&mut sudoku_grid, 4)?,
+                KeyCode::Char('5') => enter_value(&mut sudoku_grid, 5)?,
+                KeyCode::Char('6') => enter_value(&mut sudoku_grid, 6)?,
+                KeyCode::Char('7') => enter_value(&mut sudoku_grid, 7)?,
+                KeyCode::Char('8') => enter_value(&mut sudoku_grid, 8)?,
+                KeyCode::Char('9') => enter_value(&mut sudoku_grid, 9)?,
+                KeyCode::Backspace => enter_value(&mut sudoku_grid, 0)?,
                 _ => (),
             },
             Event::Mouse(event) => println!("{:?}", event),
